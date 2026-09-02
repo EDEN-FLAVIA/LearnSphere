@@ -20,7 +20,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
-      - name: Configure Pages
+      - name: Setup Pages
         uses: actions/configure-pages@v5
 
       - name: Upload Website
@@ -28,6 +28,6 @@ jobs:
         with:
           path: .
 
-      - name: Deploy Website
+      - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
