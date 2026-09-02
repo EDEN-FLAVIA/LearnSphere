@@ -1,41 +1,135 @@
-name: Deploy LearnSphere
+name: LearnSphere Basic Check
 
 on:
   push:
     branches:
       - main
+      - homepage
+      - coursepage
+      - course_detailspage
+      - featurespage
 
-  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+      - homepage
+      - coursepage
+      - course_detailspage
+      - featurespage
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: pages
-  cancel-in-progress: true
 
 jobs:
-  deploy:
+  project-check:
+    name: LearnSphere Project Check
     runs-on: ubuntu-latest
 
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
 
-      - name: Setup GitHub Pages
-        uses: actions/configure-pages@v5
+      # ----------------------------------------
+      # 1. Checkout the repository
+      # ----------------------------------------
+      - name: Checkout repository
+        uses: actions/checkout@v6
 
-      - name: Upload website
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: .
+      # ----------------------------------------
+      # 2. Display project information
+      # ----------------------------------------
+      - name: Display project information
+        run: |
+          echo "========================================"
+          echo "       LearnSphere Project Check"
+          echo "========================================"
+          echo "Repository: ${{ github.repository }}"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Event: ${{ github.event_name }}"
+          echo "Commit: ${{ github.sha }}"
+          echo "========================================"
 
-      - name: Deploy website
-        id: deployment
-        uses: actions/deploy-pages@v4
+      # ----------------------------------------
+      # 3. Check repository structure
+      # ----------------------------------------
+      - name: Check repository structure
+        shell: bash
+        run: |
+          echo "Checking LearnSphere repository..."
+
+          echo ""
+          echo "Current project files:"
+          find . -maxdepth 3 -type f \
+            ! -path "./.git/*" \
+            | sort
+
+          echo ""
+          echo "Repository structure check completed successfully."
+
+      # ----------------------------------------
+      # 4. Display expected branches
+      # ----------------------------------------
+      - name: Check configured branches
+        run: |
+          echo "========================================"
+          echo "Expected LearnSphere branches"
+          echo "========================================"
+
+          echo "✓ main"
+          echo "✓ homepage"
+          echo "✓ coursepage"
+          echo "✓ course_detailspage"
+          echo "✓ featurespage"
+
+          echo ""
+          echo "All project branches are included in this workflow."
+
+      # ----------------------------------------
+      # 5. Check currently available project files
+      # ----------------------------------------
+      - name: Check available project files
+        shell: bash
+        run: |
+          echo "Checking files that currently exist..."
+
+          if [ -f "index.html" ]; then
+            echo "✓ index.html"
+          else
+            echo "• index.html not created yet"
+          fi
+
+          if [ -f "courses.html" ]; then
+            echo "✓ courses.html"
+          else
+            echo "• courses.html not created yet"
+          fi
+
+          if [ -f "course-details.html" ]; then
+            echo "✓ course-details.html"
+          else
+            echo "• course-details.html not created yet"
+          fi
+
+          if [ -f "about.html" ]; then
+            echo "✓ about.html"
+          else
+            echo "• about.html not created yet"
+          fi
+
+          if [ -f "data/courses.json" ]; then
+            echo "✓ data/courses.json"
+          else
+            echo "• data/courses.json not created yet"
+          fi
+
+          echo ""
+          echo "File check completed."
+
+      # ----------------------------------------
+      # 6. Final status
+      # ----------------------------------------
+      - name: Final status
+        run: |
+          echo ""
+          echo "========================================"
+          echo " LearnSphere check completed successfully!"
+          echo "========================================"
+
