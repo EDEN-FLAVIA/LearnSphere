@@ -1,4 +1,4 @@
-name: Deploy Website
+name: Deploy LearnSphere Website
 
 on:
   push:
@@ -7,6 +7,10 @@ permissions:
   contents: read
   pages: write
   id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
   deploy:
@@ -17,14 +21,14 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v6
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Setup Pages
+      - name: Setup GitHub Pages
         uses: actions/configure-pages@v5
 
-      - name: Upload Website
-        uses: actions/upload-pages-artifact@v4
+      - name: Upload website files
+        uses: actions/upload-pages-artifact@v3
         with:
           path: .
 
